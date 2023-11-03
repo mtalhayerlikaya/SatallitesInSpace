@@ -1,6 +1,5 @@
 package com.example.satellitesinspace.common
 
-
 import timber.log.Timber
 
 object MockUtil {

@@ -3,8 +3,8 @@ package com.example.satellitesinspace.di
 import com.example.satellitesinspace.data.data_source.remote_data_source.RemoteDataSourceImp
 import com.example.satellitesinspace.data.data_source.remote_data_source.SatelliteAPI
 import com.example.satellitesinspace.data.repository.SatelliteRepositoryImp
-import com.example.satellitesinspace.domain.data_source.remote_data_source.RemoteSatelliteDataSource
-import com.example.satellitesinspace.domain.repository.SatelliteRepository
+import com.example.satellitesinspace.data.data_source.remote_data_source.RemoteSatelliteDataSource
+import com.example.satellitesinspace.data.repository.SatelliteRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,10 +20,16 @@ object RepositoryModule {
     fun provideSatelliteRepository(remoteSatelliteDataSource: RemoteSatelliteDataSource): SatelliteRepository =
         SatelliteRepositoryImp(remoteSatelliteDataSource)
 
-    @Provides
+ /*   @Provides
     @Singleton
     fun provideRemoteSatelliteDataSource(
         satelliteAPI: SatelliteAPI
-    ): RemoteSatelliteDataSource = RemoteDataSourceImp(satelliteAPI)
+    ): RemoteSatelliteDataSource = RemoteDataSourceImp(satelliteAPI)*/
+
+    @Provides
+    @Singleton
+    fun provideRemoteSatelliteRepositoryImp(
+        remoteDataSource: RemoteDataSourceImp
+    ): RemoteSatelliteDataSource = remoteDataSource
 
 }

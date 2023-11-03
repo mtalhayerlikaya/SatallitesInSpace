@@ -9,13 +9,17 @@ import androidx.fragment.app.viewModels
 import com.example.satellitesinspace.R
 import com.example.satellitesinspace.databinding.FragmentSatelliteListBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SatelliteListFragment : Fragment() {
 
     private var _binding: FragmentSatelliteListBinding? = null
     private val binding get() = _binding!!
-    private val satelliteListViewModel by viewModels<SatelliteListViewModel>()
+    private val satelliteListViewModel: SatelliteListViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +37,11 @@ class SatelliteListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        satelliteListViewModel.getAllSatellites()
+        CoroutineScope(Dispatchers.Main).launch {
+            satelliteListViewModel.getAllSatellites()
+
+        }
+
     }
 
     override fun onDestroyView() {

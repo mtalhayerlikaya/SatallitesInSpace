@@ -2,6 +2,7 @@ package com.example.satellitesinspace.common
 
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.ResponseBody.Companion.toResponseBody
 import timber.log.Timber
 import java.net.URL
 
@@ -23,7 +24,10 @@ class MockInterceptor : Interceptor {
             .message(responseString)
             .request(chain.request())
             .protocol(Protocol.HTTP_1_0)
-            .body(ResponseBody.create("application/json".toMediaTypeOrNull(), responseString.toByteArray()))
+            .body(
+            responseString
+                .toByteArray()
+                .toResponseBody("application/json".toMediaTypeOrNull()))
             .addHeader("content-type", "application/json")
             .build()
 

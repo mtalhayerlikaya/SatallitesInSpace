@@ -9,6 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -16,14 +17,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
 
-
     @Singleton
     @Provides
-    fun gsonConverterFactory(): GsonConverterFactory = GsonConverterFactory.create()
-
-    @Singleton
-    @Provides
-    fun provideMockInterceptor(): MockInterceptor = MockInterceptor()
+    fun provideMockInterceptor(): MockInterceptor
+    = MockInterceptor()
 
 /*    @Singleton
     @Provides
@@ -49,13 +46,13 @@ object RetrofitModule {
     @Singleton
     @Provides
     fun provideAnalyticsService(
-        okHttpClient: OkHttpClient,
-        gsonConverterFactory: GsonConverterFactory
+        okHttpClient: OkHttpClient
     ): SatelliteAPI {
 
         return Retrofit.Builder()
-            .baseUrl("https://")
-            .addConverterFactory(gsonConverterFactory)
+            .baseUrl("https://google.com.tr/?gfe_rd=cr&dcr=0&ei=cOIsWt7tCI6BX56BnLgD")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(okHttpClient)
             .build()
             .create(SatelliteAPI::class.java)
