@@ -50,6 +50,7 @@ class SatelliteDetailFragment : Fragment() {
             else
                 satelliteListViewModel.getSatelliteFromAPI(satelliteId)
             SharedPref.setIsClickedBefore(satelliteId,true,requireContext())
+            satelliteListViewModel.getSatellitePositionFromAPI(satelliteId)
         }
         observeFlow()
     }
@@ -63,6 +64,26 @@ class SatelliteDetailFragment : Fragment() {
                     is Resource.Success -> {
                         state.data?.let { satellite ->
                             satellite
+                        }
+                    }
+                    is Resource.Loading -> {
+
+                    }
+                    is Resource.Error -> {
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            satelliteListViewModel.satellitePosition.collect { state ->
+                when (state) {
+                    is Resource.Success -> {
+                        state.data?.let { position ->
+                            binding.lastPosition.text = position.posX.toString()
+                            println(position.posX.toString())
+                            println("--------------------")
                         }
                     }
                     is Resource.Loading -> {
