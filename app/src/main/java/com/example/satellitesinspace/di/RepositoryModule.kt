@@ -1,5 +1,8 @@
 package com.example.satellitesinspace.di
 
+import com.example.satellitesinspace.data.data_source.local_data_source.LocalDataSourceImp
+import com.example.satellitesinspace.data.data_source.local_data_source.LocalSatelliteDataSource
+import com.example.satellitesinspace.data.data_source.local_data_source.SatelliteDAO
 import com.example.satellitesinspace.data.data_source.remote_data_source.RemoteDataSourceImp
 import com.example.satellitesinspace.data.data_source.remote_data_source.SatelliteAPI
 import com.example.satellitesinspace.data.repository.SatelliteRepositoryImp
@@ -15,21 +18,34 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
 
+   /* @Provides
+    @Singleton
+    fun provideLocalDataImpl(satelliteDAO: SatelliteDAO): LocalSatelliteDataSource = LocalDataSourceImp(satelliteDAO)*/
+
     @Provides
     @Singleton
-    fun provideSatelliteRepository(remoteSatelliteDataSource: RemoteSatelliteDataSource): SatelliteRepository =
-        SatelliteRepositoryImp(remoteSatelliteDataSource)
+    fun provideSatelliteRepository(
+        remoteSatelliteDataSource: RemoteSatelliteDataSource,
+        localDataSource: LocalSatelliteDataSource
+    ): SatelliteRepository =
+        SatelliteRepositoryImp(remoteSatelliteDataSource, localDataSource)
 
- /*   @Provides
-    @Singleton
-    fun provideRemoteSatelliteDataSource(
-        satelliteAPI: SatelliteAPI
-    ): RemoteSatelliteDataSource = RemoteDataSourceImp(satelliteAPI)*/
+    /*   @Provides
+       @Singleton
+       fun provideRemoteSatelliteDataSource(
+           satelliteAPI: SatelliteAPI
+       ): RemoteSatelliteDataSource = RemoteDataSourceImp(satelliteAPI)*/
 
     @Provides
     @Singleton
     fun provideRemoteSatelliteRepositoryImp(
         remoteDataSource: RemoteDataSourceImp
     ): RemoteSatelliteDataSource = remoteDataSource
+
+    @Provides
+    @Singleton
+    fun provideLocalSatelliteRepositoryImp(
+        localDataSource: LocalDataSourceImp
+    ): LocalSatelliteDataSource = localDataSource
 
 }

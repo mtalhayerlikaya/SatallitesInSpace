@@ -1,4 +1,4 @@
-package com.example.satellitesinspace.presentation.satellite_list
+package com.example.satellitesinspace.presentation.satellite_detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,23 +8,21 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.fragment.navArgs
 import com.example.satellitesinspace.common.Resource
-import com.example.satellitesinspace.databinding.FragmentSatelliteListBinding
+import com.example.satellitesinspace.databinding.FragmentSatelliteDetailBinding
+import com.example.satellitesinspace.presentation.satellite_list.SatelliteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
-
+import kotlin.properties.Delegates
 @AndroidEntryPoint
-class SatelliteListFragment : Fragment() {
-
-    private var _binding: FragmentSatelliteListBinding? = null
+class SatelliteDetailFragment : Fragment() {
+    private var _binding: FragmentSatelliteDetailBinding? = null
     private val binding get() = _binding!!
     private val satelliteListViewModel: SatelliteListViewModel by viewModels()
-
+    private var satelliteId by Delegates.notNull<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,14 +34,16 @@ class SatelliteListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentSatelliteListBinding.inflate(layoutInflater)
+        _binding = FragmentSatelliteDetailBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        CoroutineScope(Dispatchers.Main).launch {
-            satelliteListViewModel.getAllSatellitesFromAPI()
+        val bundle: SatelliteDetailFragmentArgs by navArgs()
+        satelliteId = bundle.clickedItemID
+        CoroutineScope(Dispatchers.IO).launch {
+            satelliteListViewModel.getSatelliteFromAPI(satelliteId)
         }
         observeFlow()
     }
@@ -52,19 +52,11 @@ class SatelliteListFragment : Fragment() {
 
 
         viewLifecycleOwner.lifecycleScope.launch {
-            satelliteListViewModel.allSatellites.collect { state ->
+            satelliteListViewModel.satelliteDetail.collect { state ->
                 when (state) {
                     is Resource.Success -> {
                         state.data?.let { satellite ->
-                            val satelliteRecyclerView = SatelliteRecyclerView(requireContext(), satellite) {satelliteID->
-
-                                val action =
-                                    SatelliteListFragmentDirections.actionSatelliteListFragmentToSatelliteDetailFragment(satelliteID)
-                                binding.root.findNavController().navigate(action)
-                            }
-                            binding.satelliteListRv.adapter = satelliteRecyclerView
-                            binding.satelliteListRv.layoutManager =
-                                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                            println("***************"+satellite)
                         }
                     }
                     is Resource.Loading -> {
@@ -84,6 +76,5 @@ class SatelliteListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
 }

@@ -3,6 +3,7 @@ package com.example.satellitesinspace.presentation.satellite_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.satellitesinspace.common.Resource
+import com.example.satellitesinspace.data.model.SatelliteDetailItemItem
 import com.example.satellitesinspace.data.model.SatelliteListItem
 import com.example.satellitesinspace.data.repository.SatelliteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,10 +23,21 @@ constructor(private val satelliteRepository: SatelliteRepository) : ViewModel() 
     val allSatellites: StateFlow<Resource<List<SatelliteListItem>>> =
         _allSatellites
 
-    suspend fun getAllSatellites() = viewModelScope.launch {
-        satelliteRepository.satelliteList().collect(collector = {
-            _allSatellites.value = it
+    private val _satelliteDetail =
+        MutableStateFlow<Resource<SatelliteDetailItemItem>>(Resource.Empty)
+
+    val satelliteDetail: StateFlow<Resource<SatelliteDetailItemItem>> =
+        _satelliteDetail
+
+    suspend fun getAllSatellitesFromAPI() = viewModelScope.launch {
+        satelliteRepository.getSatelliteListFromAPI().collect(collector = {satelliteList->
+            _allSatellites.value = satelliteList
         })
     }
 
+    suspend fun getSatelliteFromAPI(satelliteID: Int)= viewModelScope.launch {
+        satelliteRepository.getSatelliteDetailFromAPI(satelliteID).collect(collector = {satelliteDetail->
+            _satelliteDetail.value = satelliteDetail
+        })
+    }
 }

@@ -9,5 +9,18 @@
         android:id="@+id/satelliteListFragment"
         android:name="com.example.satellitesinspace.presentation.satellite_list.SatelliteListFragment"
         android:label="fragment_satellite_list"
-        tools:layout="@layout/fragment_satellite_list" />
+        tools:layout="@layout/fragment_satellite_list" >
+        <action
+            android:id="@+id/action_satelliteListFragment_to_satelliteDetailFragment"
+            app:destination="@id/satelliteDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/satelliteDetailFragment"
+        android:name="com.example.satellitesinspace.presentation.satellite_detail.SatelliteDetailFragment"
+        android:label="fragment_satellite_detail"
+        tools:layout="@layout/fragment_satellite_detail" >
+        <argument
+            android:name="clickedItemID"
+            app:argType="integer" />
+    </fragment>
 </navigation>
