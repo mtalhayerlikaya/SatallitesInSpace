@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.satellitesinspace.common.Resource
+import com.example.satellitesinspace.common.SharedPref
 import com.example.satellitesinspace.databinding.FragmentSatelliteListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -57,7 +58,7 @@ class SatelliteListFragment : Fragment() {
                     is Resource.Success -> {
                         state.data?.let { satellite ->
                             val satelliteRecyclerView = SatelliteRecyclerView(requireContext(), satellite) {satelliteID->
-
+                                SharedPref.getIsClickedBefore(satelliteID,requireContext())
                                 val action =
                                     SatelliteListFragmentDirections.actionSatelliteListFragmentToSatelliteDetailFragment(satelliteID)
                                 binding.root.findNavController().navigate(action)

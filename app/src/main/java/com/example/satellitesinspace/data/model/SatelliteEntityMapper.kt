@@ -3,7 +3,7 @@ package com.example.satellitesinspace.data.model
 import com.example.satellitesinspace.data.data_source.local_data_source.SatelliteDetailEntity
 import com.example.satellitesinspace.data.mapper.EntityMapper
 
-class CryptoDBEntityMapper: EntityMapper<SatelliteDetailItemItem,SatelliteDetailEntity> {
+class SatelliteDBEntityMapper: EntityMapper<SatelliteDetailItemItem,SatelliteDetailEntity> {
     override fun mapToEntity(satelliteDetailModel: SatelliteDetailItemItem): SatelliteDetailEntity {
         return SatelliteDetailEntity(
             satelliteID = satelliteDetailModel.id,

@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.example.satellitesinspace.common.Resource
+import com.example.satellitesinspace.common.SharedPref
 import com.example.satellitesinspace.databinding.FragmentSatelliteDetailBinding
 import com.example.satellitesinspace.presentation.satellite_list.SatelliteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
+
 @AndroidEntryPoint
 class SatelliteDetailFragment : Fragment() {
     private var _binding: FragmentSatelliteDetailBinding? = null
@@ -43,7 +45,11 @@ class SatelliteDetailFragment : Fragment() {
         val bundle: SatelliteDetailFragmentArgs by navArgs()
         satelliteId = bundle.clickedItemID
         CoroutineScope(Dispatchers.IO).launch {
-            satelliteListViewModel.getSatelliteFromAPI(satelliteId)
+            if (SharedPref.getIsClickedBefore(satelliteId,requireContext()))
+                satelliteListViewModel.getSatelliteFromDB(satelliteId)
+            else
+                satelliteListViewModel.getSatelliteFromAPI(satelliteId)
+            SharedPref.setIsClickedBefore(satelliteId,true,requireContext())
         }
         observeFlow()
     }
@@ -56,7 +62,7 @@ class SatelliteDetailFragment : Fragment() {
                 when (state) {
                     is Resource.Success -> {
                         state.data?.let { satellite ->
-                            println("***************"+satellite)
+                            satellite
                         }
                     }
                     is Resource.Loading -> {

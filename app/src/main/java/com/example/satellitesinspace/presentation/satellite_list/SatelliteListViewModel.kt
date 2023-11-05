@@ -40,4 +40,9 @@ constructor(private val satelliteRepository: SatelliteRepository) : ViewModel() 
             _satelliteDetail.value = satelliteDetail
         })
     }
+    suspend fun getSatelliteFromDB(satelliteID: Int)= viewModelScope.launch {
+        satelliteRepository.getSatelliteDetailFromDB(satelliteID).collect(collector = {satelliteDetail->
+            _satelliteDetail.value = satelliteDetail
+        })
+    }
 }
