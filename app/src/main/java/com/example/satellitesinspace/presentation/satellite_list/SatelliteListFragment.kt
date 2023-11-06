@@ -25,7 +25,7 @@ class SatelliteListFragment : Fragment() {
     private var _binding: FragmentSatelliteListBinding? = null
     private val binding get() = _binding!!
     private val satelliteListViewModel: SatelliteListViewModel by viewModels()
-
+    private lateinit var satelliteRecyclerView: SatelliteRecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +47,30 @@ class SatelliteListFragment : Fragment() {
             satelliteListViewModel.getAllSatellitesFromAPI()
         }
         observeFlow()
+        searchSatellite()
+    }
+
+    private fun searchSatellite() {
+        binding.searchView.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { searchedQuery ->
+                        satelliteListViewModel.getSearchedSatelliteFromAPI(searchedQuery)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if(newText.isNullOrEmpty()){
+                    CoroutineScope(Dispatchers.IO).launch {
+                        satelliteListViewModel.getAllSatellitesFromAPI()
+                    }
+                }
+                return true
+            }
+
+        })
+
     }
 
     private fun observeFlow() {
@@ -57,15 +81,36 @@ class SatelliteListFragment : Fragment() {
                 when (state) {
                     is Resource.Success -> {
                         state.data?.let { satellite ->
-                            val satelliteRecyclerView = SatelliteRecyclerView(requireContext(), satellite) {satelliteID->
+                             satelliteRecyclerView = SatelliteRecyclerView(requireContext(), satellite.toMutableList()) {satelliteID,satelliteName->
                                 SharedPref.getIsClickedBefore(satelliteID,requireContext())
                                 val action =
-                                    SatelliteListFragmentDirections.actionSatelliteListFragmentToSatelliteDetailFragment(satelliteID)
+                                    SatelliteListFragmentDirections.actionSatelliteListFragmentToSatelliteDetailFragment(satelliteID,satelliteName)
                                 binding.root.findNavController().navigate(action)
                             }
                             binding.satelliteListRv.adapter = satelliteRecyclerView
                             binding.satelliteListRv.layoutManager =
                                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                        }
+                        binding.progressBarHome.visibility = View.GONE
+                    }
+                    is Resource.Loading -> {
+                        binding.progressBarHome.visibility = View.VISIBLE
+                    }
+                    is Resource.Error -> {
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        binding.progressBarHome.visibility = View.GONE
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            satelliteListViewModel.searchedSatellite.collect { state ->
+                when (state) {
+                    is Resource.Success -> {
+                        state.data?.let { satellite ->
+                            satelliteRecyclerView.updateList(satellite.toMutableList())
                         }
                     }
                     is Resource.Loading -> {

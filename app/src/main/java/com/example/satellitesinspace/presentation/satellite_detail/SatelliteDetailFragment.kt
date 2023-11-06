@@ -1,13 +1,16 @@
 package com.example.satellitesinspace.presentation.satellite_detail
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.satellitesinspace.common.Resource
 import com.example.satellitesinspace.common.SharedPref
@@ -25,11 +28,7 @@ class SatelliteDetailFragment : Fragment() {
     private val binding get() = _binding!!
     private val satelliteListViewModel: SatelliteListViewModel by viewModels()
     private var satelliteId by Delegates.notNull<Int>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    private var satelliteName by Delegates.notNull<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,46 +43,60 @@ class SatelliteDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val bundle: SatelliteDetailFragmentArgs by navArgs()
         satelliteId = bundle.clickedItemID
-        CoroutineScope(Dispatchers.IO).launch {
-            if (SharedPref.getIsClickedBefore(satelliteId,requireContext()))
+        satelliteName = bundle.satelliteName
+        CoroutineScope(Dispatchers.Main).launch {
+            if (SharedPref.getIsClickedBefore(satelliteId, requireContext()))
                 satelliteListViewModel.getSatelliteFromDB(satelliteId)
             else
                 satelliteListViewModel.getSatelliteFromAPI(satelliteId)
-            SharedPref.setIsClickedBefore(satelliteId,true,requireContext())
+            SharedPref.setIsClickedBefore(satelliteId, true, requireContext())
             satelliteListViewModel.getSatellitePositionFromAPI(satelliteId)
         }
         observeFlow()
+        onBackPressed()
     }
 
+    private fun onBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                Navigation.findNavController(binding.textView).popBackStack()
+            }
+        })
+    }
+
+
+    @SuppressLint("SetTextI18n")
     private fun observeFlow() {
-
-
         viewLifecycleOwner.lifecycleScope.launch {
             satelliteListViewModel.satelliteDetail.collect { state ->
                 when (state) {
                     is Resource.Success -> {
                         state.data?.let { satellite ->
-                            satellite
+                            binding.hightMassRatio.text = "${satellite.height}/${satellite.mass}"
+                            binding.satelliteDetailName.text = satelliteName
+                            binding.cost.text = satellite.cost_per_launch.toString()
+                            binding.firstFlight.text = satellite.first_flight
                         }
+                        binding.progressBarDetail.visibility = View.GONE
                     }
                     is Resource.Loading -> {
+                        binding.progressBarDetail.visibility = View.VISIBLE
 
                     }
                     is Resource.Error -> {
                         Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        binding.progressBarDetail.visibility = View.GONE
                     }
                     else -> {}
                 }
             }
         }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             satelliteListViewModel.satellitePosition.collect { state ->
                 when (state) {
                     is Resource.Success -> {
                         state.data?.let { position ->
-                            binding.lastPosition.text = position.posX.toString()
-                            println(position.posX.toString())
-                            println("--------------------")
+                            binding.lastPosition.text = "(${position.posX},${position.posY})"
                         }
                     }
                     is Resource.Loading -> {

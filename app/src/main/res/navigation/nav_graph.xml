@@ -22,5 +22,8 @@
         <argument
             android:name="clickedItemID"
             app:argType="integer" />
+        <argument
+            android:name="satelliteName"
+            app:argType="string" />
     </fragment>
 </navigation>

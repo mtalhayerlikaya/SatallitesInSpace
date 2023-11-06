@@ -34,6 +34,12 @@ constructor(private val satelliteRepository: SatelliteRepository) : ViewModel() 
     val satellitePosition: StateFlow<Resource<Position>> =
         _satellitePosition
 
+    private val _searchedSatellite =
+        MutableStateFlow<Resource<List<SatelliteListItem>>>(Resource.Empty)
+
+    val searchedSatellite: StateFlow<Resource<List<SatelliteListItem>>> =
+        _searchedSatellite
+
     suspend fun getAllSatellitesFromAPI() = viewModelScope.launch {
         satelliteRepository.getSatelliteListFromAPI().collect(collector = {satelliteList->
             _allSatellites.value = satelliteList
@@ -53,6 +59,11 @@ constructor(private val satelliteRepository: SatelliteRepository) : ViewModel() 
     suspend fun getSatellitePositionFromAPI(satelliteID: Int)= viewModelScope.launch {
         satelliteRepository.getSatellitePositionFromAPI(satelliteID).collect(collector = {satelliteDetail->
             _satellitePosition.value = satelliteDetail
+        })
+    }
+     fun getSearchedSatelliteFromAPI(searchedSatellite: String)= viewModelScope.launch {
+        satelliteRepository.getSearchedSatelliteFromAPI(searchedSatellite).collect(collector = {searchedSatelliteItem->
+            _searchedSatellite.value = searchedSatelliteItem
         })
     }
 }
