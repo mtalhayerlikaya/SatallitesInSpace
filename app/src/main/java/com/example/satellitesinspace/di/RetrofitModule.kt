@@ -13,29 +13,22 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+
 @Module
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
 
     @Singleton
     @Provides
-    fun provideMockInterceptor(): MockInterceptor
-    = MockInterceptor()
-
-/*    @Singleton
-    @Provides
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor =
-        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)*/
+    fun provideMockInterceptor(): MockInterceptor = MockInterceptor()
 
     @Singleton
     @Provides
     fun provideDefaultApiClient(
-        // httpLoggingInterceptor: HttpLoggingInterceptor,
         mockInterceptor: MockInterceptor
     ): OkHttpClient {
 
         val builder = OkHttpClient.Builder()
-            // .addInterceptor(httpLoggingInterceptor)
             .readTimeout(AppUtil.timeoutInterval.toLong(), TimeUnit.SECONDS)
             .connectTimeout(AppUtil.timeoutInterval.toLong(), TimeUnit.SECONDS)
             .addInterceptor(mockInterceptor)

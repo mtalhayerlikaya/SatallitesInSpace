@@ -15,7 +15,7 @@ import com.example.satellitesinspace.databinding.SatelliteListRvItemBinding
 class SatelliteRecyclerView(
     val context: Context,
     var satelliteList: MutableList<SatelliteListItem>,
-    val isClicked: (Int,String) -> Unit
+    val isClicked: (Int, String) -> Unit
 ) :
     RecyclerView.Adapter<SatelliteRecyclerView.SatelliteViewHolder>() {
 
@@ -33,7 +33,7 @@ class SatelliteRecyclerView(
             }
             binding.satelliteName.text = satelliteItem.name
             binding.satelliteItemRoot.setOnClickListener {
-                isClicked.invoke(satelliteItem.id,satelliteItem.name)
+                isClicked.invoke(satelliteItem.id, satelliteItem.name)
             }
             if (satelliteList.last() == satelliteItem && satelliteList.size != 1) binding.seperator.visibility =
                 View.GONE

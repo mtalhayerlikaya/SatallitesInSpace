@@ -3,7 +3,9 @@ package com.example.satellitesinspace.presentation.satellite_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.satellitesinspace.common.Resource
-import com.example.satellitesinspace.data.model.*
+import com.example.satellitesinspace.data.model.Position
+import com.example.satellitesinspace.data.model.SatelliteDetailItemItem
+import com.example.satellitesinspace.data.model.SatelliteListItem
 import com.example.satellitesinspace.data.repository.SatelliteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,29 +43,33 @@ constructor(private val satelliteRepository: SatelliteRepository) : ViewModel() 
         _searchedSatellite
 
     suspend fun getAllSatellitesFromAPI() = viewModelScope.launch {
-        satelliteRepository.getSatelliteListFromAPI().collect(collector = {satelliteList->
+        satelliteRepository.getSatelliteListFromAPI().collect(collector = { satelliteList ->
             _allSatellites.value = satelliteList
         })
     }
 
-    suspend fun getSatelliteFromAPI(satelliteID: Int)= viewModelScope.launch {
-        satelliteRepository.getSatelliteDetailFromAPI(satelliteID).collect(collector = {satelliteDetail->
+    suspend fun getSatelliteFromAPI(satelliteID: Int) = viewModelScope.launch {
+        satelliteRepository.getSatelliteDetailFromAPI(satelliteID).collect(collector = { satelliteDetail ->
             _satelliteDetail.value = satelliteDetail
         })
     }
-    suspend fun getSatelliteFromDB(satelliteID: Int)= viewModelScope.launch {
-        satelliteRepository.getSatelliteDetailFromDB(satelliteID).collect(collector = {satelliteDetail->
+
+    suspend fun getSatelliteFromDB(satelliteID: Int) = viewModelScope.launch {
+        satelliteRepository.getSatelliteDetailFromDB(satelliteID).collect(collector = { satelliteDetail ->
             _satelliteDetail.value = satelliteDetail
         })
     }
-    suspend fun getSatellitePositionFromAPI(satelliteID: Int)= viewModelScope.launch {
-        satelliteRepository.getSatellitePositionFromAPI(satelliteID).collect(collector = {satelliteDetail->
+
+    suspend fun getSatellitePositionFromAPI(satelliteID: Int) = viewModelScope.launch {
+        satelliteRepository.getSatellitePositionFromAPI(satelliteID).collect(collector = { satelliteDetail ->
             _satellitePosition.value = satelliteDetail
         })
     }
-     fun getSearchedSatelliteFromAPI(searchedSatellite: String)= viewModelScope.launch {
-        satelliteRepository.getSearchedSatelliteFromAPI(searchedSatellite).collect(collector = {searchedSatelliteItem->
-            _searchedSatellite.value = searchedSatelliteItem
-        })
+
+    fun getSearchedSatelliteFromAPI(searchedSatellite: String) = viewModelScope.launch {
+        satelliteRepository.getSearchedSatelliteFromAPI(searchedSatellite)
+            .collect(collector = { searchedSatelliteItem ->
+                _searchedSatellite.value = searchedSatelliteItem
+            })
     }
 }

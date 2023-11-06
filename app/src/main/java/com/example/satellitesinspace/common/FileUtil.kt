@@ -1,7 +1,6 @@
 package com.example.satellitesinspace.common
 
 import android.content.Context
-import timber.log.Timber
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 

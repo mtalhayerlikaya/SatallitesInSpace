@@ -55,13 +55,13 @@ class SatelliteListFragment : Fragment() {
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { searchedQuery ->
-                        satelliteListViewModel.getSearchedSatelliteFromAPI(searchedQuery)
+                    satelliteListViewModel.getSearchedSatelliteFromAPI(searchedQuery)
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if(newText.isNullOrEmpty()){
+                if (newText.isNullOrEmpty()) {
                     CoroutineScope(Dispatchers.IO).launch {
                         satelliteListViewModel.getAllSatellitesFromAPI()
                     }
@@ -81,10 +81,16 @@ class SatelliteListFragment : Fragment() {
                 when (state) {
                     is Resource.Success -> {
                         state.data?.let { satellite ->
-                             satelliteRecyclerView = SatelliteRecyclerView(requireContext(), satellite.toMutableList()) {satelliteID,satelliteName->
-                                SharedPref.getIsClickedBefore(satelliteID,requireContext())
+                            satelliteRecyclerView = SatelliteRecyclerView(
+                                requireContext(),
+                                satellite.toMutableList()
+                            ) { satelliteID, satelliteName ->
+                                SharedPref.getIsClickedBefore(satelliteID, requireContext())
                                 val action =
-                                    SatelliteListFragmentDirections.actionSatelliteListFragmentToSatelliteDetailFragment(satelliteID,satelliteName)
+                                    SatelliteListFragmentDirections.actionSatelliteListFragmentToSatelliteDetailFragment(
+                                        satelliteID,
+                                        satelliteName
+                                    )
                                 binding.root.findNavController().navigate(action)
                             }
                             binding.satelliteListRv.adapter = satelliteRecyclerView

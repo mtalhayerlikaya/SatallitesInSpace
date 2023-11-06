@@ -3,7 +3,6 @@ package com.example.satellitesinspace.data.data_source.local_data_source
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.satellitesinspace.data.model.SatelliteListItem
 
 @Dao
 interface SatelliteDAO {

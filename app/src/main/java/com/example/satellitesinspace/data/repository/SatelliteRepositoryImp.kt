@@ -93,7 +93,7 @@ constructor(
             emit(Resource.Loading)
             try {
                 response.body()?.let { satelliteList ->
-                    emit(Resource.Success(satelliteList.filter { it.name.contains(searchedQuery,true) }))
+                    emit(Resource.Success(satelliteList.filter { it.name.contains(searchedQuery, true) }))
                 }
             } catch (throwable: Throwable) {
                 emit(Resource.Error(throwable.message ?: throwable.localizedMessage))

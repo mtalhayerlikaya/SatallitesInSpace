@@ -1,14 +1,9 @@
 package com.example.satellitesinspace
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
+import androidx.appcompat.app.AppCompatActivity
 import com.example.satellitesinspace.common.AppUtil
 import com.example.satellitesinspace.databinding.ActivityMainBinding
-import com.example.satellitesinspace.presentation.satellite_list.SatelliteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

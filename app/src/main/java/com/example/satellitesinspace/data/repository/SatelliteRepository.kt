@@ -1,9 +1,10 @@
 package com.example.satellitesinspace.data.repository
 
 import com.example.satellitesinspace.common.Resource
-import com.example.satellitesinspace.data.model.*
+import com.example.satellitesinspace.data.model.Position
+import com.example.satellitesinspace.data.model.SatelliteDetailItemItem
+import com.example.satellitesinspace.data.model.SatelliteListItem
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 
 interface SatelliteRepository {
     suspend fun getSatelliteListFromAPI(): Flow<Resource<List<SatelliteListItem>>>
